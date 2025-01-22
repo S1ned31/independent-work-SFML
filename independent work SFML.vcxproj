@@ -145,7 +145,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Code\BTree.cpp" />
+    <ClCompile Include="Code\design.cpp" />
+    <ClCompile Include="Code\greedyAlgorithm.cpp" />
     <ClCompile Include="Code\hashTable.cpp" />
+    <ClCompile Include="Code\longestSequence.cpp" />
     <ClCompile Include="Code\Main.cpp" />
     <ClCompile Include="Code\Sort.cpp" />
   </ItemGroup>
@@ -184,7 +187,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Code\BTree.h" />
+    <ClInclude Include="Code\design.h" />
+    <ClInclude Include="Code\greedyAlgorithm.h" />
     <ClInclude Include="Code\hashTable.h" />
+    <ClInclude Include="Code\longestSequence.h" />
     <ClInclude Include="Code\Sort.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

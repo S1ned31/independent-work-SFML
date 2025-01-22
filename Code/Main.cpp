@@ -1,9 +1,13 @@
 #include <SFML/Graphics.hpp>
+#include "design.h"
 #include "Sort.h"  
 #include "hashTable.h"
 #include "BTree.h"
+#include "greedyAlgorithm.h"
+#include "longestSequence.h"
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include <cstring>
 #include <unordered_map>
 
@@ -56,11 +60,48 @@ void displayHashTable(sf::RenderWindow& window, HashTable& hashTable, sf::Font& 
     window.display();
 }
 
+void displayBTreeUsers(sf::RenderWindow& window, BTree& t, sf::Font& font) {
+    sf::Text text;
+    text.setFont(font);
+    text.setCharacterSize(14);
+    text.setFillColor(sf::Color::White);
+
+    int yPos = 20;
+
+    // Создаем строку для отображения
+    std::ostringstream output;
+    // Перехватываем вывод из функции traverse и сохраняем в output
+    std::streambuf* orig_buf = std::cout.rdbuf();
+    std::cout.rdbuf(output.rdbuf());
+
+    // Вызываем traverse для вывода информации
+    t.traverse(); // Это выведет информацию в output
+
+    // Восстанавливаем стандартный буфер для вывода в консоль
+    std::cout.rdbuf(orig_buf);
+
+    // Отображаем информацию в окне
+    std::string result = output.str();
+    text.setString(result);
+    text.setPosition(10, yPos);
+    window.draw(text);
+
+    window.display();
+}
+
+
 int main() {
     setlocale(LC_ALL, "ru");
 
     // Example array for sorting
     std::vector<int> arr = { 52, 45, 38, 29, 14, 98, 101, 33, 9, 6, 8, 5, 34, 4, 3, 2, 1 };
+
+    vector<Project> projects;
+    vector<Project> MVP_Projects;
+
+    sf::Color softGreenColor(199, 233, 192); // Фон
+    sf::Color oliveGreenColor(154, 205, 50); // Кнопка
+    sf::Color darkGreenColor(34, 139, 34);  // Текст
 
     // Create the SFML window
     sf::RenderWindow window(sf::VideoMode(800, 600), L"Программа");
@@ -71,77 +112,36 @@ int main() {
         return -1;
     }
 
-    sf::Text titleText;
-    titleText.setFont(font);
-    titleText.setString(L"Пирамидальная сортировка");
-    titleText.setCharacterSize(16);
-    titleText.setFillColor(sf::Color::White);
-    titleText.setStyle(sf::Text::Bold);
-    titleText.setPosition(10, 10);
 
-    // Button for sorting
-    sf::Text buttonText;
-    buttonText.setFont(font);
-    buttonText.setString(L"Нажми меня");
-    buttonText.setCharacterSize(16);
-    buttonText.setFillColor(sf::Color::White);
-    buttonText.setStyle(sf::Text::Bold);
-    sf::RectangleShape button(sf::Vector2f(200, 50));
-    button.setPosition(10, 50);
-    button.setFillColor(sf::Color::Blue);
-    sf::FloatRect buttonBounds = button.getGlobalBounds();
-    sf::FloatRect textBounds = buttonText.getGlobalBounds();
-    buttonText.setPosition(button.getPosition().x + (buttonBounds.width - textBounds.width) / 2,
-        button.getPosition().y + (buttonBounds.height - textBounds.height) / 2 - 5);
+
+    sf::Text titleText;
+    createTitleText(titleText, font, L"НЕпирамидальная сортировка", 16, 10, 10);
+
+    // Кнопка сортировки
+    sf::RectangleShape sortButton;
+    sf::Text sortButtonText;
+    createButton(sortButton, sortButtonText, font, L"Нажми меня", { 200, 50 }, { 10, 50 }, oliveGreenColor, 16);
+
+
 
     // Hash table title
     sf::Text hashTableTitle;
-    hashTableTitle.setFont(font);
-    hashTableTitle.setString(L"Хеш-таблица");
-    hashTableTitle.setCharacterSize(16);
-    hashTableTitle.setFillColor(sf::Color::White);
-    hashTableTitle.setStyle(sf::Text::Bold);
-    hashTableTitle.setPosition(10, 120);
+    createTitleText(hashTableTitle, font, L"Хеш-таблица", 16, 10, 120);
 
-    // Button for hash table display
+    // Кнопка для отображения хеш-таблицы
+    sf::RectangleShape hashButton;
     sf::Text hashButtonText;
-    hashButtonText.setFont(font);
-    hashButtonText.setString(L"Показать хеш-таблицу");
-    hashButtonText.setCharacterSize(16);
-    hashButtonText.setFillColor(sf::Color::White);
-    hashButtonText.setStyle(sf::Text::Bold);
-    sf::RectangleShape hashButton(sf::Vector2f(200, 50));
-    hashButton.setPosition(10, 160);
-    hashButton.setFillColor(sf::Color::Green);
-    sf::FloatRect hashButtonBounds = hashButton.getGlobalBounds();
-    sf::FloatRect hashTextBounds = hashButtonText.getGlobalBounds();
-    hashButtonText.setPosition(hashButton.getPosition().x + (hashButtonBounds.width - hashTextBounds.width) / 2,
-        hashButton.getPosition().y + (hashButtonBounds.height - hashTextBounds.height) / 2 - 5);;
+    createButton(hashButton, hashButtonText, font, L"Показать хеш-таблицу", { 200, 50 }, { 10, 160 }, oliveGreenColor, 16);
+
 
     // Заголовок для B - дерева
     sf::Text bTreeTitle;
-    bTreeTitle.setFont(font);
-    bTreeTitle.setString(L"B-дерево");
-    bTreeTitle.setCharacterSize(16);
-    bTreeTitle.setFillColor(sf::Color::White);
-    bTreeTitle.setStyle(sf::Text::Bold);
-    bTreeTitle.setPosition(600, 10);
+    createTitleText(bTreeTitle, font, L"B-дерево", 16, 600, 10);
 
-    // Кнопка для вывода B-дерева
+    // Кнопка для отображения B-дерева
+    sf::RectangleShape bTreeButton;
     sf::Text bTreeButtonText;
-    bTreeButtonText.setFont(font);
-    bTreeButtonText.setString(L"Вывести дерево");
-    bTreeButtonText.setCharacterSize(16);
-    bTreeButtonText.setFillColor(sf::Color::White);
-    bTreeButtonText.setStyle(sf::Text::Bold);
-    sf::RectangleShape bTreeButton(sf::Vector2f(150, 50));
-    bTreeButton.setPosition(600, 50);
-    bTreeButton.setFillColor(sf::Color::Blue);
-    sf::FloatRect bTreeButtonBounds = bTreeButton.getGlobalBounds();
-    sf::FloatRect bTreeTextBounds = bTreeButtonText.getGlobalBounds();
-    bTreeButtonText.setPosition(bTreeButton.getPosition().x + (bTreeButtonBounds.width - bTreeTextBounds.width) / 2,
-        bTreeButton.getPosition().y + (bTreeButtonBounds.height - bTreeTextBounds.height) / 2 - 5);
-
+    createButton(bTreeButton, bTreeButtonText, font, L"Вывести дерево", { 150, 50 }, { 575, 50 }, oliveGreenColor, 16);
 
 
     // Create hash table instance
@@ -154,45 +154,68 @@ int main() {
     hashTable.insert("654321", "Петров Петр Петрович");
 
     bool showHashTableWindow = false;
+    bool showBTreeWindow = false;
 
     // Создание B-дерева и добавление данных
     BTree t(3);
     Owner* owners[30] = {
-        new Owner("Иван", "Иванов", 101, 2),
-        new Owner("Петр", "Петров", 102, 1),
-        new Owner("Сергей", "Сергеев", 103, 3),
-        new Owner("Мария", "Маркова", 104, 2),
-        new Owner("Анна", "Антонова", 105, 1),
-        new Owner("Дмитрий", "Дмитриев", 106, 2),
-        new Owner("Елена", "Еленова", 107, 1),
-        new Owner("Алексей", "Алексеев", 108, 3),
-        new Owner("Максим", "Максимов", 109, 2),
-        new Owner("Ирина", "Иринова", 110, 1),
-        new Owner("Ольга", "Ольгова", 111, 1),
-        new Owner("Никита", "Никитин", 112, 1),
-        new Owner("Владимир", "Владимиров", 113, 2),
-        new Owner("Юлия", "Юльева", 114, 2),
-        new Owner("Татьяна", "Танкова", 115, 3),
-        new Owner("Виктор", "Викторов", 116, 1),
-        new Owner("Роман", "Романов", 117, 1),
-        new Owner("Ксения", "Ксении", 118, 2),
-        new Owner("Григорий", "Григорьев", 119, 2),
-        new Owner("Константин", "Константинов", 120, 1),
-        new Owner("Валерия", "Валерьева", 121, 1),
-        new Owner("Зинаида", "Зиновьева", 122, 2),
-        new Owner("Аркадий", "Аркадьев", 123, 3),
-        new Owner("Денис", "Денисов", 124, 1),
-        new Owner("Евгений", "Евгеньев", 125, 2),
-        new Owner("Светлана", "Светлова", 126, 2),
-        new Owner("Павел", "Павлов", 127, 1),
-        new Owner("Василиса", "Васильева", 128, 1),
-        new Owner("Виктория", "Козлова", 142, 1),
-        new Owner("Николай", "Александров", 143, 2)
+        new Owner("Ivan", "Ivanov", 101, 2),
+        new Owner("Pyotr", "Petrov", 102, 1),
+        new Owner("Sergey", "Sergeyev", 103, 3),
+        new Owner("Maria", "Markova", 104, 2),
+        new Owner("Anna", "Antonova", 105, 1),
+        new Owner("Dmitry", "Dmitriev", 106, 2),
+        new Owner("Elena", "Yelenova", 107, 1),
+        new Owner("Alexey", "Alexeev", 108, 3),
+        new Owner("Maxim", "Maximov", 109, 2),
+        new Owner("Irina", "Irinova", 110, 1),
+        new Owner("Olga", "Ol'gova", 111, 1),
+        new Owner("Nikita", "Nikitin", 112, 1),
+        new Owner("Vladimir", "Vladimirov", 113, 2),
+        new Owner("Yulia", "Yuleva", 114, 2),
+        new Owner("Tatyana", "Tankova", 115, 3),
+        new Owner("Viktor", "Viktorov", 116, 1),
+        new Owner("Roman", "Romanov", 117, 1),
+        new Owner("Kseniya", "Ksenia", 118, 2),
+        new Owner("Grigory", "Grigoryev", 119, 2),
+        new Owner("Konstantin", "Konstantinov", 120, 1),
+        new Owner("Valeriya", "Valeryeva", 121, 1),
+        new Owner("Zinaida", "Zinovyeva", 122, 2),
+        new Owner("Arkady", "Arkadyev", 123, 3),
+        new Owner("Denis", "Denisov", 124, 1),
+        new Owner("Evgeny", "Evgenyev", 125, 2),
+        new Owner("Svetlana", "Svetlova", 126, 2),
+        new Owner("Pavel", "Pavlov", 127, 1),
+        new Owner("Vasilisa", "Vasileva", 128, 1),
+        new Owner("Viktoriya", "Kozlova", 142, 1),
+        new Owner("Nikolay", "Alexandrov", 143, 2)
+
     };
 
     for (int i = 0; i < 30; i++) {
         t.insert(owners[i]);
     }
+
+    sf::Text greedyTitle;
+    createTitleText(greedyTitle, font, L"Жадібний алгоритм", 16, 570, 120);
+
+    // Кнопка для открытия окна "Жадный алгоритм"
+    sf::RectangleShape greedyButton;
+    sf::Text greedyButtonText;
+    createButton(greedyButton, greedyButtonText, font, L"Жадный алгоритм", { 200, 50 }, { 550, 160 }, oliveGreenColor, 16);
+
+    bool showGreedyWindow = false;
+    int startDate = 0, endDate = 0, profit = 0;
+
+    sf::Text longestSequenceTitle;
+    createTitleText(longestSequenceTitle, font, L"Найдовша спадна послідовність", 16, 500, 240);
+
+    // Кнопка для пошуку найдовшої спадної послідовності
+
+    sf::RectangleShape longestSequenceButton;
+    sf::Text longestSequenceButtonText;
+    createButton(longestSequenceButton, longestSequenceButtonText, font, L"Найдовша спадна послідовність", { 200, 50 }, { 550, 260 }, oliveGreenColor, 16);
+
 
     while (window.isOpen()) {
         sf::Event event;
@@ -200,7 +223,9 @@ int main() {
             if (event.type == sf::Event::Closed)
                 window.close();
             if (event.type == sf::Event::MouseButtonPressed) {
-                if (button.getGlobalBounds().contains(event.mouseButton.x, event.mouseButton.y)) {
+                sf::Vector2i mousePos = sf::Mouse::getPosition(window);
+
+                if (sortButton.getGlobalBounds().contains(event.mouseButton.x, event.mouseButton.y)) {
                     heapSort(arr);
                     displaySortedArray(arr);
                 }
@@ -215,20 +240,38 @@ int main() {
                 if (bTreeButton.getGlobalBounds().contains(event.mouseButton.x, event.mouseButton.y)) {
                     cout << "Вывод содержимого B-дерева:" << endl;
                     t.traverse();  // Вывод содержимого дерева
+                    showBTreeWindow = true;
+                }
+                
+                if (greedyButton.getGlobalBounds().contains(event.mouseButton.x, event.mouseButton.y)) {
+                    showGreedyWindow = true; 
+                }
+
+                if (longestSequenceButton.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
+                    openLongestSequenceWindow(font);
                 }
             }
         }
 
-        window.clear();
+        // Отображаем информацию о владельцах автомобилей
+
+
+        window.clear(softGreenColor);
         window.draw(titleText);
-        window.draw(button);
-        window.draw(buttonText);
+        window.draw(sortButton);
+        window.draw(sortButtonText);
         window.draw(hashTableTitle);
         window.draw(hashButton);
         window.draw(hashButtonText);
         window.draw(bTreeTitle);
         window.draw(bTreeButton);
         window.draw(bTreeButtonText);
+        window.draw(greedyTitle);
+        window.draw(greedyButton);
+        window.draw(greedyButtonText);
+        window.draw(longestSequenceTitle);
+        window.draw(longestSequenceButton);
+        window.draw(longestSequenceButtonText);
         window.display();
     
 
@@ -243,13 +286,120 @@ int main() {
                         hashWindow.close();
                 }
 
-                hashWindow.clear();
+                hashWindow.clear(sf::Color(250, 220, 100, 0));
                 displayHashTable(hashWindow, hashTable, font);
             }
 
             showHashTableWindow = false;
         }
-    
-}
+
+        if (showBTreeWindow) {
+            // Создаем новое окно для отображения B-дерева
+            sf::RenderWindow bTreeWindow(sf::VideoMode(600, 600), L"B-дерево");
+
+            while (bTreeWindow.isOpen()) {
+                sf::Event bTreeEvent;
+                while (bTreeWindow.pollEvent(bTreeEvent)) {
+                    if (bTreeEvent.type == sf::Event::Closed)
+                        bTreeWindow.close();
+                }
+
+                bTreeWindow.clear(sf::Color(250, 220, 100, 0));
+                displayBTreeUsers(bTreeWindow, t, font);
+            }
+
+            showBTreeWindow = false;
+        }
+
+        // Открытие окна "Жадного алгоритма"
+        if (showGreedyWindow) {
+            sf::RenderWindow greedyWindow(sf::VideoMode(600, 400), L"Жадный алгоритм");
+            sf::Text inputLabel(L"Введите проект (название, дата начала, дата конца, прибыль):", font, 16);
+            inputLabel.setPosition(10, 10);
+
+            sf::Text outputLabel(L"", font, 16);
+            outputLabel.setPosition(380, 100);
+            outputLabel.setFillColor(sf::Color::Cyan);
+
+            sf::RectangleShape addButton(sf::Vector2f(150, 40));
+            addButton.setPosition(10, 100);
+            addButton.setFillColor(oliveGreenColor);
+
+            sf::Text addButtonText(L"Добавить проект", font, 16);
+            addButtonText.setPosition(15, 105);
+
+            sf::RectangleShape calculateButton(sf::Vector2f(200, 40));
+            calculateButton.setPosition(10, 200);
+            calculateButton.setFillColor(oliveGreenColor);
+
+            sf::Text calculateButtonText(L"Рассчитать прибыль", font, 16);
+            calculateButtonText.setPosition(15, 205);
+
+            std::wstring inputText; // Переменная для хранения текста
+
+            while (greedyWindow.isOpen()) {
+                sf::Event greedyEvent;
+                while (greedyWindow.pollEvent(greedyEvent)) {
+                    if (greedyEvent.type == sf::Event::Closed)
+                        greedyWindow.close();
+
+                    if (greedyEvent.type == sf::Event::MouseButtonPressed) {
+                        if (addButton.getGlobalBounds().contains(greedyEvent.mouseButton.x, greedyEvent.mouseButton.y)) {
+                            // Логика добавления проекта
+                            std::wistringstream ss(inputText);
+                            std::wstring projectName;
+                            int startDate, endDate, profit;
+
+                            ss >> projectName >> startDate >> endDate >> profit;
+                            projects.emplace_back(projectName, profit, startDate, endDate);
+                            inputText.clear(); // Очистка ввода
+                        }
+
+                        if (calculateButton.getGlobalBounds().contains(greedyEvent.mouseButton.x, greedyEvent.mouseButton.y)) {
+                            // Логика вычисления максимальной прибыли
+                            std::vector<Project> selectedProjects = findMaxProfitProjects(projects);
+                            int totalProfit = calculateTotalProfit(selectedProjects);
+
+                            std::wostringstream output;
+                            output << L"Выбранные проекты: \n";
+                            for (const auto& project : selectedProjects) {
+                                output << project.NameOfProject << L" (прибыль: " << project.Profit << L")\n";
+                            }
+                            outputLabel.setString(sf::String(output.str()));
+                        }
+                    }
+
+                    if (greedyEvent.type == sf::Event::TextEntered) {
+                        if (greedyEvent.text.unicode == '\b' && !inputText.empty()) {
+                            inputText.pop_back(); // Удалить символ
+                        }
+                        else if (greedyEvent.text.unicode > 31 && greedyEvent.text.unicode < 128) {
+                            inputText += static_cast<wchar_t>(greedyEvent.text.unicode);
+                        }
+                    }
+                }
+
+                greedyWindow.clear(sf::Color(250, 220, 100, 0));
+                greedyWindow.draw(inputLabel);
+                greedyWindow.draw(addButton);
+                greedyWindow.draw(addButtonText);
+                greedyWindow.draw(calculateButton);
+                greedyWindow.draw(calculateButtonText);
+
+                // Отображение текста ввода
+                sf::Text inputDisplay(sf::String(inputText), font, 16);
+                inputDisplay.setPosition(60, 50);
+                greedyWindow.draw(inputDisplay);
+
+                // Отображаем результат
+                greedyWindow.draw(outputLabel);
+
+                greedyWindow.display();
+            }
+
+            showGreedyWindow = false;
+        }
+    }
+
     return 0;
 }

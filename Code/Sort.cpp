@@ -63,7 +63,7 @@ void displaySortedArray(const std::vector<int>& arr) {
                 resultWindow.close();
         }
 
-        resultWindow.clear();
+        resultWindow.clear(sf::Color(250, 220, 100, 0));
         resultWindow.draw(resultText);
         resultWindow.display();
     }
