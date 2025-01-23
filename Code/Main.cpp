@@ -5,6 +5,8 @@
 #include "BTree.h"
 #include "greedyAlgorithm.h"
 #include "longestSequence.h"
+#include "graphBFS.h"
+//#include "graphVisualization.h"
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -211,10 +213,39 @@ int main() {
     createTitleText(longestSequenceTitle, font, L"Найдовша спадна послідовність", 16, 500, 240);
 
     // Кнопка для пошуку найдовшої спадної послідовності
-
     sf::RectangleShape longestSequenceButton;
     sf::Text longestSequenceButtonText;
     createButton(longestSequenceButton, longestSequenceButtonText, font, L"Найдовша спадна послідовність", { 200, 50 }, { 550, 260 }, oliveGreenColor, 16);
+
+    // Заголовок для графа BFS
+    sf::Text graphTitle;
+    createTitleText(graphTitle, font, L"Граф BFS", 16, 10, 320);
+
+    // Кнопка для створення графу (BFS)
+    sf::RectangleShape graphButton;
+    sf::Text graphButtonText;
+    createButton(graphButton, graphButtonText, font, L"Граф BFS", { 200, 50 }, { 10, 320 }, oliveGreenColor, 16);
+
+    Graph g(false); // Пример для ненаправленного графа
+    g.addEdge(0, 1);
+    g.addEdge(0, 2);
+    g.addEdge(1, 2);
+    g.addEdge(1, 3);
+    g.addEdge(2, 3);
+    g.addEdge(2, 4);
+    g.addEdge(4, 1);
+    g.addEdge(4, 5);
+    g.addEdge(4, 6);
+    g.addEdge(6, 7);
+    g.addEdge(6, 8);
+    g.addEdge(6, 9);
+    g.addEdge(8, 9);
+    g.addEdge(9, 5);
+    g.addEdge(8, 10);
+    g.addEdge(10, 3);
+    g.addEdge(18, 19);
+    g.addEdge(19, 20);
+    g.breadthFirstSearch(0);
 
 
     while (window.isOpen()) {
@@ -242,19 +273,20 @@ int main() {
                     t.traverse();  // Вывод содержимого дерева
                     showBTreeWindow = true;
                 }
-                
+
                 if (greedyButton.getGlobalBounds().contains(event.mouseButton.x, event.mouseButton.y)) {
-                    showGreedyWindow = true; 
+                    showGreedyWindow = true;
                 }
 
                 if (longestSequenceButton.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
                     openLongestSequenceWindow(font);
                 }
+
+                if (graphButton.getGlobalBounds().contains(event.mouseButton.x, event.mouseButton.y)) {
+                    g.visualizeGraph();
+                }
             }
         }
-
-        // Отображаем информацию о владельцах автомобилей
-
 
         window.clear(softGreenColor);
         window.draw(titleText);
@@ -272,8 +304,10 @@ int main() {
         window.draw(longestSequenceTitle);
         window.draw(longestSequenceButton);
         window.draw(longestSequenceButtonText);
+        window.draw(graphButton);
+        window.draw(graphButtonText);
         window.display();
-    
+
 
         if (showHashTableWindow) {
             // Создаем новое окно для отображения хеш-таблицы
@@ -402,4 +436,8 @@ int main() {
     }
 
     return 0;
-}
+}  
+
+
+
+

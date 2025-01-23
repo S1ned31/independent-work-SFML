@@ -146,6 +146,8 @@
   <ItemGroup>
     <ClCompile Include="Code\BTree.cpp" />
     <ClCompile Include="Code\design.cpp" />
+    <ClCompile Include="Code\graphBFS.cpp" />
+    <ClCompile Include="Code\graphVisualization.cpp" />
     <ClCompile Include="Code\greedyAlgorithm.cpp" />
     <ClCompile Include="Code\hashTable.cpp" />
     <ClCompile Include="Code\longestSequence.cpp" />
@@ -188,6 +190,8 @@
   <ItemGroup>
     <ClInclude Include="Code\BTree.h" />
     <ClInclude Include="Code\design.h" />
+    <ClInclude Include="Code\graphBFS.h" />
+    <ClInclude Include="Code\graphVisualization.h" />
     <ClInclude Include="Code\greedyAlgorithm.h" />
     <ClInclude Include="Code\hashTable.h" />
     <ClInclude Include="Code\longestSequence.h" />
