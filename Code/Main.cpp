@@ -6,7 +6,7 @@
 #include "greedyAlgorithm.h"
 #include "longestSequence.h"
 #include "graphBFS.h"
-//#include "graphVisualization.h"
+#include "dijkstra.h"
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -217,36 +217,58 @@ int main() {
     sf::Text longestSequenceButtonText;
     createButton(longestSequenceButton, longestSequenceButtonText, font, L"Найдовша спадна послідовність", { 200, 50 }, { 550, 260 }, oliveGreenColor, 16);
 
-    // Заголовок для графа BFS
-    sf::Text graphTitle;
-    createTitleText(graphTitle, font, L"Граф BFS", 16, 10, 320);
+    // Заголовок для графа BFS з алгоритмом Дейкстри
+    sf::Text dijkstaTitle;
+    createTitleText(dijkstaTitle, font, L"Граф Дейкстри", 16, 10, 240);
 
     // Кнопка для створення графу (BFS)
-    sf::RectangleShape graphButton;
-    sf::Text graphButtonText;
-    createButton(graphButton, graphButtonText, font, L"Граф BFS", { 200, 50 }, { 10, 320 }, oliveGreenColor, 16);
+    sf::RectangleShape dijkstaButton;
+    sf::Text dijkstaButtonText;
+    createButton(dijkstaButton, dijkstaButtonText, font, L"Граф Дейкстри", { 200, 50 }, { 10, 260 }, oliveGreenColor, 16);
 
-    Graph g(false); // Пример для ненаправленного графа
-    g.addEdge(0, 1);
-    g.addEdge(0, 2);
-    g.addEdge(1, 2);
-    g.addEdge(1, 3);
-    g.addEdge(2, 3);
-    g.addEdge(2, 4);
-    g.addEdge(4, 1);
-    g.addEdge(4, 5);
-    g.addEdge(4, 6);
-    g.addEdge(6, 7);
-    g.addEdge(6, 8);
-    g.addEdge(6, 9);
-    g.addEdge(8, 9);
-    g.addEdge(9, 5);
-    g.addEdge(8, 10);
-    g.addEdge(10, 3);
-    g.addEdge(18, 19);
-    g.addEdge(19, 20);
-    g.breadthFirstSearch(0);
+    // Заголовок для графа BFS з алгоритмом Беллмана-Форда
+    sf::Text bellmanFordTitle;
+    createTitleText(bellmanFordTitle, font, L"Граф Беллмана-Форда", 16, 10, 340);
 
+    // Кнопка для створення графу (BFS з алгоритмом Беллмана-Форда)
+    sf::RectangleShape bellmanFordButton;
+    sf::Text bellmanFordButtonText;
+    createButton(bellmanFordButton, bellmanFordButtonText, font, L"Граф BFS", { 200, 50 }, { 10, 360 }, oliveGreenColor, 16);
+
+    Graph dijkstra(false); // Пример для ненаправленного графа
+    dijkstra.addEdge(0, 1);
+    dijkstra.addEdge(0, 2);
+    dijkstra.addEdge(1, 2);
+    dijkstra.addEdge(1, 3);
+    dijkstra.addEdge(1, 3);
+    dijkstra.addEdge(2, 3);
+    dijkstra.addEdge(2, 4);
+    dijkstra.addEdge(4, 1);
+    dijkstra.addEdge(4, 5);
+    dijkstra.addEdge(4, 6);
+    dijkstra.addEdge(6, 7);
+    dijkstra.addEdge(6, 8);
+    dijkstra.addEdge(6, 9);
+    dijkstra.addEdge(8, 9);
+    dijkstra.addEdge(9, 5);
+    dijkstra.addEdge(8, 10);
+    dijkstra.addEdge(10, 3);
+    dijkstra.addEdge(18, 19);
+    dijkstra.addEdge(19, 20);
+    dijkstra.breadthFirstSearch(0);
+    
+    Graph graphBellmanFord(false);
+    graphBellmanFord.addEdge(0, 1);
+    graphBellmanFord.addEdge(0, 2);
+    graphBellmanFord.addEdge(1, 3);
+    graphBellmanFord.addEdge(1, 4);
+    graphBellmanFord.addEdge(2, 5);
+    graphBellmanFord.addEdge(3, 6);
+    graphBellmanFord.addEdge(4, 6);
+    graphBellmanFord.addEdge(5, 7);
+    graphBellmanFord.addEdge(6, 8);
+    graphBellmanFord.addEdge(7, 9);
+    graphBellmanFord.addEdge(8, 9);
 
     while (window.isOpen()) {
         sf::Event event;
@@ -282,8 +304,12 @@ int main() {
                     openLongestSequenceWindow(font);
                 }
 
-                if (graphButton.getGlobalBounds().contains(event.mouseButton.x, event.mouseButton.y)) {
-                    g.visualizeGraph();
+                if (dijkstaButton.getGlobalBounds().contains(event.mouseButton.x, event.mouseButton.y)) {
+                    dijkstra.visualizeDijkstra(0, 7);
+                }
+
+                if (bellmanFordButton.getGlobalBounds().contains(event.mouseButton.x, event.mouseButton.y)) {
+                    graphBellmanFord.visualizeBellmanFord(1, 9);
                 }
             }
         }
@@ -304,8 +330,12 @@ int main() {
         window.draw(longestSequenceTitle);
         window.draw(longestSequenceButton);
         window.draw(longestSequenceButtonText);
-        window.draw(graphButton);
-        window.draw(graphButtonText);
+        window.draw(dijkstaTitle);
+        window.draw(dijkstaButton);
+        window.draw(dijkstaButtonText);
+        window.draw(bellmanFordTitle);
+        window.draw(bellmanFordButton);
+        window.draw(bellmanFordButtonText);
         window.display();
 
 

@@ -42,6 +42,9 @@
     <ClCompile Include="Code\graphVisualization.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
+    <ClCompile Include="Code\dijkstra.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Binaries\x64\Debug\independent work SFML.exe" />
@@ -101,5 +104,13 @@
     <ClInclude Include="Code\graphVisualization.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
+    <ClInclude Include="Code\dijkstra.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\..\..\OneDrive\Изображения\Снимки экрана\Снимок экрана 2025-01-23 165656.png">
+      <Filter>Файлы ресурсов</Filter>
+    </Image>
   </ItemGroup>
 </Project>

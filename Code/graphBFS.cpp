@@ -2,6 +2,14 @@
 
 Graph::Graph(bool isDirected) : directed(isDirected), edgeCount(0) {}
 
+void Graph::addEdge(int u, int v, int weight) {
+    addEdge(u, v);
+    edgeWeights[{u, v}] = weight;
+    if (!directed) {
+        edgeWeights[{v, u}] = weight;
+    }
+}
+
 void Graph::addEdge(int u, int v) {
     adjList[u].push_back(v);
     if (!directed) {
@@ -92,26 +100,78 @@ void Graph::calculateNodePositions(unordered_map<int, sf::Vector2f>& positions, 
     }
 }
 
-void Graph::visualizeGraph() {
-    sf::RenderWindow window(sf::VideoMode(800, 600), "Graph Visualization");
+void Graph::visualizeDijkstra(int startVertex, int endVertex) {
+    vector<int> path;
+    dijkstra(startVertex, endVertex, path);
 
+    sf::RenderWindow window(sf::VideoMode(800, 600), "Dijkstra Algorithm Visualization");
     unordered_map<int, sf::Vector2f> positions;
     calculateNodePositions(positions, window.getSize().x, window.getSize().y);
 
     while (window.isOpen()) {
         sf::Event event;
         while (window.pollEvent(event)) {
-            if (event.type == sf::Event::Closed ||
-                (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape)) {
+            if (event.type == sf::Event::Closed) {
                 window.close();
             }
         }
 
         window.clear();
         drawGraph(window, positions);
+
+        // Рисуем путь
+        for (size_t i = 0; i < path.size() - 1; ++i) {
+            sf::Vector2f from = positions[path[i]];
+            sf::Vector2f to = positions[path[i + 1]];
+
+            sf::Vertex line[] = {
+                sf::Vertex(sf::Vector2f(from.x + 20, from.y + 20), sf::Color::Blue),
+                sf::Vertex(sf::Vector2f(to.x + 20, to.y + 20), sf::Color::Blue)
+            };
+            window.draw(line, 2, sf::Lines);
+        }
+
         window.display();
     }
 }
+
+void Graph::visualizeBellmanFord(int startVertex, int endVertex) {
+    vector<int> path;
+    if (!bellmanFord(startVertex, endVertex, path)) return;
+
+    sf::RenderWindow window(sf::VideoMode(800, 600), "Bellman-Ford Algorithm Visualization");
+    unordered_map<int, sf::Vector2f> positions;
+    calculateNodePositions(positions, window.getSize().x, window.getSize().y);
+
+    while (window.isOpen()) {
+        sf::Event event;
+        while (window.pollEvent(event)) {
+            if (event.type == sf::Event::Closed) {
+                window.close();
+            }
+        }
+
+        window.clear();
+        drawGraph(window, positions);
+
+        // Рисуем путь
+        for (size_t i = 0; i < path.size() - 1; ++i) {
+            sf::Vector2f from = positions[path[i]];
+            sf::Vector2f to = positions[path[i + 1]];
+
+            sf::Vertex line[] = {
+                sf::Vertex(sf::Vector2f(from.x + 20, from.y + 20), sf::Color::Red),
+                sf::Vertex(sf::Vector2f(to.x + 20, to.y + 20), sf::Color::Red)
+            };
+            window.draw(line, 2, sf::Lines);
+        }
+
+        window.display();
+    }
+}
+
+
+
 
 
 void Graph::drawGraph(sf::RenderWindow& window, const unordered_map<int, sf::Vector2f>& positions) {
@@ -147,4 +207,115 @@ void Graph::drawGraph(sf::RenderWindow& window, const unordered_map<int, sf::Vec
             window.draw(line, 2, sf::Lines);
         }
     }
+}
+
+void Graph::dijkstra(int startVertex, int endVertex, vector<int>& path) {
+    unordered_map<int, float> distances;
+    unordered_map<int, int> previous;
+    set<pair<float, int>> priorityQueue;
+
+    // Инициализация расстояний и начального узла
+    for (const auto& entry : adjList) {
+        distances[entry.first] = numeric_limits<float>::infinity();
+        previous[entry.first] = -1;
+    }
+    distances[startVertex] = 0;
+    priorityQueue.insert({ 0, startVertex });
+
+    while (!priorityQueue.empty()) {
+        int current = priorityQueue.begin()->second;
+        priorityQueue.erase(priorityQueue.begin());
+
+        if (current == endVertex) break;
+
+        for (int neighbor : adjList[current]) {
+            float weight = 1.0f; // Установите вес рёбер (если требуется другой, замените здесь)
+            float newDistance = distances[current] + weight;
+
+            if (newDistance < distances[neighbor]) {
+                priorityQueue.erase({ distances[neighbor], neighbor });
+                distances[neighbor] = newDistance;
+                previous[neighbor] = current;
+                priorityQueue.insert({ newDistance, neighbor });
+            }
+        }
+    }
+
+    // Восстановление пути
+    path.clear();
+    for (int at = endVertex; at != -1; at = previous[at]) {
+        path.push_back(at);
+    }
+    reverse(path.begin(), path.end());
+}
+
+bool Graph::bellmanFord(int startVertex, int endVertex, vector<int>& path) {
+    unordered_map<int, int> distance;
+    unordered_map<int, int> predecessor;
+
+    // Инициализация расстояний
+    for (const auto& entry : adjList) {
+        distance[entry.first] = INT_MAX;
+        predecessor[entry.first] = -1;
+    }
+    distance[startVertex] = 0;
+
+    // Итерации алгоритма
+    int vertexCount = adjList.size();
+    for (int i = 0; i < vertexCount - 1; ++i) {
+        for (const auto& entry : adjList) {
+            int u = entry.first;
+            for (int v : entry.second) {
+                int weight = edgeWeights[{u, v}];
+                if (distance[u] != INT_MAX && distance[u] + weight < distance[v]) {
+                    distance[v] = distance[u] + weight;
+                    predecessor[v] = u;
+                }
+            }
+        }
+    }
+
+    // Проверка на наличие отрицательного цикла
+    for (const auto& entry : adjList) {
+        int u = entry.first;
+        for (int v : entry.second) {
+            int weight = edgeWeights[{u, v}];
+            if (distance[u] != INT_MAX && distance[u] + weight < distance[v]) {
+                cerr << "Обнаружен отрицательный цикл!" << endl;
+                return false;
+            }
+        }
+    }
+
+    // Восстановление пути
+    path.clear();
+    for (int at = endVertex; at != -1; at = predecessor[at]) {
+        path.push_back(at);
+    }
+    reverse(path.begin(), path.end());
+
+    return true;
+}
+
+void runVisualization() {
+    Graph graphDijkstra(false);
+    Graph graphBellmanFord(false);
+
+    // Добавление рёбер для графов
+    graphDijkstra.addEdge(0, 1);
+    graphDijkstra.addEdge(1, 2);
+    graphDijkstra.addEdge(2, 3);
+    graphDijkstra.addEdge(3, 4);
+
+    graphBellmanFord.addEdge(0, 1);
+    graphBellmanFord.addEdge(1, 2);
+    graphBellmanFord.addEdge(2, 3);
+    graphBellmanFord.addEdge(3, 4);
+
+    // Запуск визуализаций
+    thread dijkstraThread([&]() { graphDijkstra.visualizeDijkstra(0, 4); });
+    thread bellmanFordThread([&]() { graphBellmanFord.visualizeBellmanFord(0, 4); });
+
+    dijkstraThread.join();
+    bellmanFordThread.join();
 }

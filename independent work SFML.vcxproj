@@ -113,7 +113,7 @@
       <PreprocessorDefinitions>SFML_STATIC;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>C:\Users\admin\source\repos\independent work SFML\Libareries\SFML-2.6.2\include;C:\Users\admin\source\repos\independent work SFML\vcpkg\installed\x64-windows\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <LanguageStandard>stdcpp14</LanguageStandard>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -131,7 +131,7 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>C:\Users\admin\source\repos\independent work SFML\Libareries\SFML-2.6.2\include;C:\Users\admin\source\repos\independent work SFML\vcpkg\installed\x64-windows\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <LanguageStandard>stdcpp14</LanguageStandard>
+      <LanguageStandard>stdcpp17</LanguageStandard>
       <LanguageStandard_C>Default</LanguageStandard_C>
     </ClCompile>
     <Link>
@@ -146,6 +146,7 @@
   <ItemGroup>
     <ClCompile Include="Code\BTree.cpp" />
     <ClCompile Include="Code\design.cpp" />
+    <ClCompile Include="Code\dijkstra.cpp" />
     <ClCompile Include="Code\graphBFS.cpp" />
     <ClCompile Include="Code\graphVisualization.cpp" />
     <ClCompile Include="Code\greedyAlgorithm.cpp" />
@@ -190,12 +191,16 @@
   <ItemGroup>
     <ClInclude Include="Code\BTree.h" />
     <ClInclude Include="Code\design.h" />
+    <ClInclude Include="Code\dijkstra.h" />
     <ClInclude Include="Code\graphBFS.h" />
     <ClInclude Include="Code\graphVisualization.h" />
     <ClInclude Include="Code\greedyAlgorithm.h" />
     <ClInclude Include="Code\hashTable.h" />
     <ClInclude Include="Code\longestSequence.h" />
     <ClInclude Include="Code\Sort.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\..\..\OneDrive\Изображения\Снимки экрана\Снимок экрана 2025-01-23 165656.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
