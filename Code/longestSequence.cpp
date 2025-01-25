@@ -29,16 +29,16 @@ std::vector<int> findLongestDecreasingSubsequence(const std::vector<int>& sequen
     return longestSubsequence;
 }
 
-// Реализация логики окна SFML
+// Реалізація логіки вікна SFML
 void openLongestSequenceWindow(sf::Font& font) {
-    sf::RenderWindow window(sf::VideoMode(800, 600), L"Найдите самую длинную убывающую последовательность");
+    sf::RenderWindow window(sf::VideoMode(800, 600), L"Знайти найдовшу спадну послідовність");
 
-    sf::Text inputLabel(L"Введите последовательность чисел через пробел:", font, 16);
+    sf::Text inputLabel(L"Введіть послідовність числел через пробіл:", font, 16);
     inputLabel.setPosition(10, 10);
 
     sf::RectangleShape calculateButton;
     sf::Text calculateButtonText;
-    createButton(calculateButton, calculateButtonText, font, L"Найти последовательность", { 300, 50 }, { 10, 100 }, sf::Color::Green, 16);
+    createButton(calculateButton, calculateButtonText, font, L"Знайти послідовність", { 300, 50 }, { 10, 100 }, sf::Color::Green, 16);
 
     sf::Text inputDisplay("", font, 16);
     inputDisplay.setPosition(10, 50);
@@ -58,7 +58,7 @@ void openLongestSequenceWindow(sf::Font& font) {
 
             if (event.type == sf::Event::TextEntered) {
                 if (event.text.unicode == '\b' && !inputText.empty()) {
-                    inputText.pop_back(); // Удалить последний символ
+                    inputText.pop_back(); // Видалити останній символ
                 }
                 else if (event.text.unicode < 128) {
                     inputText += static_cast<wchar_t>(event.text.unicode);
@@ -68,7 +68,7 @@ void openLongestSequenceWindow(sf::Font& font) {
             if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
                 sf::Vector2i mousePos = sf::Mouse::getPosition(window);
                 if (calculateButton.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
-                    // Обработка последовательности
+                    // Обробка послідовності
                     std::wistringstream iss(inputText);
                     std::vector<int> sequence;
                     int number;
@@ -79,10 +79,10 @@ void openLongestSequenceWindow(sf::Font& font) {
 
                     std::vector<int> longestSubsequence = findLongestDecreasingSubsequence(sequence);
 
-                    // Формируем вывод
+                    // Формуємо вивід
                     std::wostringstream output;
-                    output << L"Длина последовательности: " << longestSubsequence.size() << L"\n";
-                    output << L"Члены последовательности: ";
+                    output << L"Довжина послідовності: " << longestSubsequence.size() << L"\n";
+                    output << L"Члени послідовності: ";
                     for (int num : longestSubsequence) {
                         output << num << L" ";
                     }

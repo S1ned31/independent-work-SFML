@@ -5,6 +5,10 @@
 #include <fstream>
 #include <cstring>
 
+/////////////////////////////////
+// Файл для роботи з геш-таблицею
+/////////////////////////////////
+
 const int TABLE_SIZE = 100;
 
 struct HashEntry {

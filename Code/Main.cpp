@@ -40,7 +40,7 @@ void loadFromFile(const char* filename, HashTable& hashTable) {
     file.close();
 }
 
-// Функция для отображения хеш-таблицы в новом окне
+// Функция для відображення геш-таблиці у новому вікні
 void displayHashTable(sf::RenderWindow& window, HashTable& hashTable, sf::Font& font) {
     sf::Text text;
     text.setFont(font);
@@ -62,6 +62,7 @@ void displayHashTable(sf::RenderWindow& window, HashTable& hashTable, sf::Font& 
     window.display();
 }
 
+// Функция для відображення дерева у новому вікні
 void displayBTreeUsers(sf::RenderWindow& window, BTree& t, sf::Font& font) {
     sf::Text text;
     text.setFont(font);
@@ -95,7 +96,7 @@ void displayBTreeUsers(sf::RenderWindow& window, BTree& t, sf::Font& font) {
 int main() {
     setlocale(LC_ALL, "ru");
 
-    // Example array for sorting
+    // Приклад для сортування 
     std::vector<int> arr = { 52, 45, 38, 29, 14, 98, 101, 33, 9, 6, 8, 5, 34, 4, 3, 2, 1 };
 
     vector<Project> projects;
@@ -105,60 +106,55 @@ int main() {
     sf::Color oliveGreenColor(154, 205, 50); // Кнопка
     sf::Color darkGreenColor(34, 139, 34);  // Текст
 
-    // Create the SFML window
+    // Створення вікна
     sf::RenderWindow window(sf::VideoMode(800, 600), L"Программа");
 
+    // Завантажуємо шрифт
     sf::Font font;
     if (!font.loadFromFile("Fonts/static/Roboto-Bold.ttf")) {
-        std::cerr << L"Ошибка загрузки шрифта" << std::endl;
+        std::cerr << L"Помилка завантаження шрифта!" << std::endl;
         return -1;
     }
 
-
-
     sf::Text titleText;
-    createTitleText(titleText, font, L"НЕпирамидальная сортировка", 16, 10, 10);
+    createTitleText(titleText, font, L"Пірамидальне сортування", 16, 10, 10);
 
-    // Кнопка сортировки
+    // Кнопка сортування 
     sf::RectangleShape sortButton;
     sf::Text sortButtonText;
-    createButton(sortButton, sortButtonText, font, L"Нажми меня", { 200, 50 }, { 10, 50 }, oliveGreenColor, 16);
+    createButton(sortButton, sortButtonText, font, L"Натисни мене", { 200, 50 }, { 10, 50 }, oliveGreenColor, 16);
 
-
-
-    // Hash table title
+    // Заголовок геш-таблиці 
     sf::Text hashTableTitle;
-    createTitleText(hashTableTitle, font, L"Хеш-таблица", 16, 10, 120);
+    createTitleText(hashTableTitle, font, L"Геш-таблиця", 16, 10, 120);
 
-    // Кнопка для отображения хеш-таблицы
+    // Кнопка для відображення геш-таблиці
     sf::RectangleShape hashButton;
     sf::Text hashButtonText;
-    createButton(hashButton, hashButtonText, font, L"Показать хеш-таблицу", { 200, 50 }, { 10, 160 }, oliveGreenColor, 16);
+    createButton(hashButton, hashButtonText, font, L"Показати геш-таблицу", { 200, 50 }, { 10, 160 }, oliveGreenColor, 16);
 
+    // Файл з якого завантажуються користувачі до геш-таблиці
+    HashTable hashTable;
+    loadFromFile("./Code/Текст.txt", hashTable);
+
+    // Додаемо нових користувачів до геш-таблиці
+    hashTable.insert("123456", "Иванов Иван Иванович");
+    hashTable.insert("654321", "Петров Петр Петрович");
+
+    bool showHashTableWindow = false;
 
     // Заголовок для B - дерева
     sf::Text bTreeTitle;
     createTitleText(bTreeTitle, font, L"B-дерево", 16, 600, 10);
 
-    // Кнопка для отображения B-дерева
+    // Кнопка для відображення B-дерева
     sf::RectangleShape bTreeButton;
     sf::Text bTreeButtonText;
-    createButton(bTreeButton, bTreeButtonText, font, L"Вывести дерево", { 150, 50 }, { 575, 50 }, oliveGreenColor, 16);
+    createButton(bTreeButton, bTreeButtonText, font, L"Вивести дерево", { 150, 50 }, { 575, 50 }, oliveGreenColor, 16);
 
-
-    // Create hash table instance
-    HashTable hashTable;
-    loadFromFile("./Code/Текст.txt", hashTable);
-
-
-    // Insert some data into the hash table
-    hashTable.insert("123456", "Иванов Иван Иванович");
-    hashTable.insert("654321", "Петров Петр Петрович");
-
-    bool showHashTableWindow = false;
     bool showBTreeWindow = false;
 
-    // Создание B-дерева и добавление данных
+    // Створення В-дерева
     BTree t(3);
     Owner* owners[30] = {
         new Owner("Ivan", "Ivanov", 101, 2),
@@ -198,17 +194,19 @@ int main() {
         t.insert(owners[i]);
     }
 
+    // Заголовок до жадібного алгоритму
     sf::Text greedyTitle;
     createTitleText(greedyTitle, font, L"Жадібний алгоритм", 16, 570, 120);
 
-    // Кнопка для открытия окна "Жадный алгоритм"
+    // Кнопка для відкритя вікно "Жадібний алгоритм"
     sf::RectangleShape greedyButton;
     sf::Text greedyButtonText;
-    createButton(greedyButton, greedyButtonText, font, L"Жадный алгоритм", { 200, 50 }, { 550, 160 }, oliveGreenColor, 16);
+    createButton(greedyButton, greedyButtonText, font, L"Жадібний алгоритм", { 200, 50 }, { 550, 160 }, oliveGreenColor, 16);
 
     bool showGreedyWindow = false;
     int startDate = 0, endDate = 0, profit = 0;
 
+    // Заголовок для динамічного програмування 
     sf::Text longestSequenceTitle;
     createTitleText(longestSequenceTitle, font, L"Найдовша спадна послідовність", 16, 500, 240);
 
@@ -235,7 +233,7 @@ int main() {
     sf::Text bellmanFordButtonText;
     createButton(bellmanFordButton, bellmanFordButtonText, font, L"Граф BFS", { 200, 50 }, { 10, 360 }, oliveGreenColor, 16);
 
-    Graph dijkstra(false); // Пример для ненаправленного графа
+    Graph dijkstra(false); // Приклад для ненаправленного графа
     dijkstra.addEdge(0, 1);
     dijkstra.addEdge(0, 2);
     dijkstra.addEdge(1, 2);
@@ -292,7 +290,7 @@ int main() {
 
                 if (bTreeButton.getGlobalBounds().contains(event.mouseButton.x, event.mouseButton.y)) {
                     cout << "Вывод содержимого B-дерева:" << endl;
-                    t.traverse();  // Вывод содержимого дерева
+                    t.traverse(); 
                     showBTreeWindow = true;
                 }
 
@@ -338,10 +336,10 @@ int main() {
         window.draw(bellmanFordButtonText);
         window.display();
 
-
+        // Відкриття вікна "Геш-таблиця"
         if (showHashTableWindow) {
-            // Создаем новое окно для отображения хеш-таблицы
-            sf::RenderWindow hashWindow(sf::VideoMode(600, 600), L"Хеш-таблица");
+            // Створюємо нове вікно для відображення Геш-таблиці 
+            sf::RenderWindow hashWindow(sf::VideoMode(600, 600), L"Геш-таблица");
 
             while (hashWindow.isOpen()) {
                 sf::Event hashEvent;
@@ -357,8 +355,9 @@ int main() {
             showHashTableWindow = false;
         }
 
+        // Відкриття вікна "В-дерево
         if (showBTreeWindow) {
-            // Создаем новое окно для отображения B-дерева
+            // Створюемо нове вікно для відображення В-дерева
             sf::RenderWindow bTreeWindow(sf::VideoMode(600, 600), L"B-дерево");
 
             while (bTreeWindow.isOpen()) {
@@ -375,10 +374,10 @@ int main() {
             showBTreeWindow = false;
         }
 
-        // Открытие окна "Жадного алгоритма"
+        // Відкриття вікна "Жадібний алгоритм"
         if (showGreedyWindow) {
-            sf::RenderWindow greedyWindow(sf::VideoMode(600, 400), L"Жадный алгоритм");
-            sf::Text inputLabel(L"Введите проект (название, дата начала, дата конца, прибыль):", font, 16);
+            sf::RenderWindow greedyWindow(sf::VideoMode(600, 400), L"Жадібний алгоритм");
+            sf::Text inputLabel(L"Введіть проєкт (назва, дата початку, дата кінця, прибуток):", font, 16);
             inputLabel.setPosition(10, 10);
 
             sf::Text outputLabel(L"", font, 16);
@@ -389,17 +388,17 @@ int main() {
             addButton.setPosition(10, 100);
             addButton.setFillColor(oliveGreenColor);
 
-            sf::Text addButtonText(L"Добавить проект", font, 16);
+            sf::Text addButtonText(L"Додати проєкт", font, 16);
             addButtonText.setPosition(15, 105);
 
             sf::RectangleShape calculateButton(sf::Vector2f(200, 40));
             calculateButton.setPosition(10, 200);
             calculateButton.setFillColor(oliveGreenColor);
 
-            sf::Text calculateButtonText(L"Рассчитать прибыль", font, 16);
+            sf::Text calculateButtonText(L"Вирахувати прибуток", font, 16);
             calculateButtonText.setPosition(15, 205);
 
-            std::wstring inputText; // Переменная для хранения текста
+            std::wstring inputText; // Змінна для зберігання тексту
 
             while (greedyWindow.isOpen()) {
                 sf::Event greedyEvent;
@@ -409,25 +408,23 @@ int main() {
 
                     if (greedyEvent.type == sf::Event::MouseButtonPressed) {
                         if (addButton.getGlobalBounds().contains(greedyEvent.mouseButton.x, greedyEvent.mouseButton.y)) {
-                            // Логика добавления проекта
                             std::wistringstream ss(inputText);
                             std::wstring projectName;
                             int startDate, endDate, profit;
 
                             ss >> projectName >> startDate >> endDate >> profit;
                             projects.emplace_back(projectName, profit, startDate, endDate);
-                            inputText.clear(); // Очистка ввода
+                            inputText.clear(); 
                         }
 
                         if (calculateButton.getGlobalBounds().contains(greedyEvent.mouseButton.x, greedyEvent.mouseButton.y)) {
-                            // Логика вычисления максимальной прибыли
                             std::vector<Project> selectedProjects = findMaxProfitProjects(projects);
                             int totalProfit = calculateTotalProfit(selectedProjects);
 
                             std::wostringstream output;
-                            output << L"Выбранные проекты: \n";
+                            output << L"Обранні проєкты: \n";
                             for (const auto& project : selectedProjects) {
-                                output << project.NameOfProject << L" (прибыль: " << project.Profit << L")\n";
+                                output << project.NameOfProject << L" (прибуток: " << project.Profit << L")\n";
                             }
                             outputLabel.setString(sf::String(output.str()));
                         }
@@ -435,7 +432,7 @@ int main() {
 
                     if (greedyEvent.type == sf::Event::TextEntered) {
                         if (greedyEvent.text.unicode == '\b' && !inputText.empty()) {
-                            inputText.pop_back(); // Удалить символ
+                            inputText.pop_back(); // Видалити символ
                         }
                         else if (greedyEvent.text.unicode > 31 && greedyEvent.text.unicode < 128) {
                             inputText += static_cast<wchar_t>(greedyEvent.text.unicode);
@@ -450,12 +447,12 @@ int main() {
                 greedyWindow.draw(calculateButton);
                 greedyWindow.draw(calculateButtonText);
 
-                // Отображение текста ввода
+                // Відображення тексту вводу
                 sf::Text inputDisplay(sf::String(inputText), font, 16);
                 inputDisplay.setPosition(60, 50);
                 greedyWindow.draw(inputDisplay);
 
-                // Отображаем результат
+                // Відображення результату
                 greedyWindow.draw(outputLabel);
 
                 greedyWindow.display();

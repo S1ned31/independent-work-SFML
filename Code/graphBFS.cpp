@@ -67,7 +67,6 @@ void Graph::breadthFirstSearch(int startVertex) {
 void Graph::calculateNodePositions(unordered_map<int, sf::Vector2f>& positions, float width, float height) {
     int radius = 20;
 
-    // Инициализация случайного начального положения для узлов
     random_device rd;
     mt19937 gen(rd());
     uniform_real_distribution<> disX(radius, width - radius);
@@ -80,7 +79,6 @@ void Graph::calculateNodePositions(unordered_map<int, sf::Vector2f>& positions, 
         positions[vertex] = sf::Vector2f(x, y);
     }
 
-    // Простейший алгоритм разметки узлов
     for (int i = 0; i < 1000; ++i) {
         for (const auto& entry : adjList) {
             int vertex = entry.first;
@@ -91,7 +89,6 @@ void Graph::calculateNodePositions(unordered_map<int, sf::Vector2f>& positions, 
                 float distance = sqrt(direction.x * direction.x + direction.y * direction.y);
                 if (distance == 0) continue;
 
-                // Притяжение соседних узлов
                 float force = (distance - 100.0f) / distance;
                 positions[vertex] += force * direction * 0.01f;
                 positions[neighbor] -= force * direction * 0.01f;
@@ -104,7 +101,7 @@ void Graph::visualizeDijkstra(int startVertex, int endVertex) {
     vector<int> path;
     dijkstra(startVertex, endVertex, path);
 
-    sf::RenderWindow window(sf::VideoMode(800, 600), "Dijkstra Algorithm Visualization");
+    sf::RenderWindow window(sf::VideoMode(800, 600), "Візуалізація алгоритму Dijkstra");
     unordered_map<int, sf::Vector2f> positions;
     calculateNodePositions(positions, window.getSize().x, window.getSize().y);
 
@@ -119,7 +116,6 @@ void Graph::visualizeDijkstra(int startVertex, int endVertex) {
         window.clear();
         drawGraph(window, positions);
 
-        // Рисуем путь
         for (size_t i = 0; i < path.size() - 1; ++i) {
             sf::Vector2f from = positions[path[i]];
             sf::Vector2f to = positions[path[i + 1]];
@@ -139,7 +135,7 @@ void Graph::visualizeBellmanFord(int startVertex, int endVertex) {
     vector<int> path;
     if (!bellmanFord(startVertex, endVertex, path)) return;
 
-    sf::RenderWindow window(sf::VideoMode(800, 600), "Bellman-Ford Algorithm Visualization");
+    sf::RenderWindow window(sf::VideoMode(800, 600), "Візуалізація алгоритму Bellman-Ford");
     unordered_map<int, sf::Vector2f> positions;
     calculateNodePositions(positions, window.getSize().x, window.getSize().y);
 
@@ -154,7 +150,6 @@ void Graph::visualizeBellmanFord(int startVertex, int endVertex) {
         window.clear();
         drawGraph(window, positions);
 
-        // Рисуем путь
         for (size_t i = 0; i < path.size() - 1; ++i) {
             sf::Vector2f from = positions[path[i]];
             sf::Vector2f to = positions[path[i + 1]];
@@ -170,10 +165,6 @@ void Graph::visualizeBellmanFord(int startVertex, int endVertex) {
     }
 }
 
-
-
-
-
 void Graph::drawGraph(sf::RenderWindow& window, const unordered_map<int, sf::Vector2f>& positions) {
     int radius = 20;
     for (const auto& entry : adjList) {
@@ -188,7 +179,7 @@ void Graph::drawGraph(sf::RenderWindow& window, const unordered_map<int, sf::Vec
         sf::Text text;
         sf::Font font;
         if (!font.loadFromFile("Fonts/static/Roboto-Bold.ttf")) {
-            cerr << "Ошибка загрузки шрифта!" << endl;
+            cerr << "Помилка завантаження шрифта!" << endl;
             return;
         }
         text.setFont(font);
@@ -214,7 +205,6 @@ void Graph::dijkstra(int startVertex, int endVertex, vector<int>& path) {
     unordered_map<int, int> previous;
     set<pair<float, int>> priorityQueue;
 
-    // Инициализация расстояний и начального узла
     for (const auto& entry : adjList) {
         distances[entry.first] = numeric_limits<float>::infinity();
         previous[entry.first] = -1;
@@ -229,7 +219,7 @@ void Graph::dijkstra(int startVertex, int endVertex, vector<int>& path) {
         if (current == endVertex) break;
 
         for (int neighbor : adjList[current]) {
-            float weight = 1.0f; // Установите вес рёбер (если требуется другой, замените здесь)
+            float weight = 1.0f; 
             float newDistance = distances[current] + weight;
 
             if (newDistance < distances[neighbor]) {
@@ -241,7 +231,6 @@ void Graph::dijkstra(int startVertex, int endVertex, vector<int>& path) {
         }
     }
 
-    // Восстановление пути
     path.clear();
     for (int at = endVertex; at != -1; at = previous[at]) {
         path.push_back(at);
@@ -253,14 +242,12 @@ bool Graph::bellmanFord(int startVertex, int endVertex, vector<int>& path) {
     unordered_map<int, int> distance;
     unordered_map<int, int> predecessor;
 
-    // Инициализация расстояний
     for (const auto& entry : adjList) {
         distance[entry.first] = INT_MAX;
         predecessor[entry.first] = -1;
     }
     distance[startVertex] = 0;
 
-    // Итерации алгоритма
     int vertexCount = adjList.size();
     for (int i = 0; i < vertexCount - 1; ++i) {
         for (const auto& entry : adjList) {
@@ -275,19 +262,17 @@ bool Graph::bellmanFord(int startVertex, int endVertex, vector<int>& path) {
         }
     }
 
-    // Проверка на наличие отрицательного цикла
     for (const auto& entry : adjList) {
         int u = entry.first;
         for (int v : entry.second) {
             int weight = edgeWeights[{u, v}];
             if (distance[u] != INT_MAX && distance[u] + weight < distance[v]) {
-                cerr << "Обнаружен отрицательный цикл!" << endl;
+                cerr << "Виявленно від'ємний цикл!" << endl;
                 return false;
             }
         }
     }
 
-    // Восстановление пути
     path.clear();
     for (int at = endVertex; at != -1; at = predecessor[at]) {
         path.push_back(at);
@@ -301,7 +286,6 @@ void runVisualization() {
     Graph graphDijkstra(false);
     Graph graphBellmanFord(false);
 
-    // Добавление рёбер для графов
     graphDijkstra.addEdge(0, 1);
     graphDijkstra.addEdge(1, 2);
     graphDijkstra.addEdge(2, 3);
@@ -312,7 +296,6 @@ void runVisualization() {
     graphBellmanFord.addEdge(2, 3);
     graphBellmanFord.addEdge(3, 4);
 
-    // Запуск визуализаций
     thread dijkstraThread([&]() { graphDijkstra.visualizeDijkstra(0, 4); });
     thread bellmanFordThread([&]() { graphBellmanFord.visualizeBellmanFord(0, 4); });
 

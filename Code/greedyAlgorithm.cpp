@@ -1,14 +1,12 @@
 #include "greedyAlgorithm.h"
 
-using namespace std;
-
 bool compareProjects(const Project& a, const Project& b) {
     return a.DateOfEnd < b.DateOfEnd;
 }
 
-// Функция для нахождения проектов с максимальной прибылью
+// Функция для знаходження проєктів з максимальним прибутком
 std::vector<Project> findMaxProfitProjects(const std::vector<Project>& projects) {
-    // Создаём копию, чтобы отсортировать проекты
+    // Створюемо копію, щоб відсортувати всі проєкти
     std::vector<Project> sortedProjects = projects;
     sort(sortedProjects.begin(), sortedProjects.end(), compareProjects);
 
@@ -37,7 +35,7 @@ std::vector<Project> findMaxProfitProjects(const std::vector<Project>& projects)
     return bestProjects;
 }
 
-// Функция для подсчёта общей прибыли
+// Функция для підрахування спільного прибутку
 int calculateTotalProfit(const std::vector<Project>& projects) {
     int totalProfit = 0;
     for (const auto& project : projects) {

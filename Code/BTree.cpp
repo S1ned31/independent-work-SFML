@@ -1,6 +1,6 @@
 #include "BTree.h"
 
-// Конструктор узла
+// Конструктор вузла
 TreeNode::TreeNode(int t1, bool leaf1) {
     t = t1;
     leaf = leaf1;
@@ -9,7 +9,7 @@ TreeNode::TreeNode(int t1, bool leaf1) {
     n = 0;
 }
 
-// Проход по дереву
+// Прохід по дереву
 void TreeNode::traverse() {
     int i;
     for (i = 0; i < n; i++) {
@@ -21,7 +21,7 @@ void TreeNode::traverse() {
     if (!leaf) C[i]->traverse();
 }
 
-// Поиск узла
+// Пошук вузла
 TreeNode* TreeNode::search(int k) {
     int i = 0;
     while (i < n && k > keys[i]->car_number) i++;
@@ -38,17 +38,17 @@ BTree::BTree(int temp) {
     t = temp;
 }
 
-// Обход дерева
+// Обхід дерева
 void BTree::traverse() {
     if (root != nullptr) root->traverse();
 }
 
-// Поиск в дереве
+// Пошук у дереві
 TreeNode* BTree::search(int k) {
     return (root == nullptr) ? nullptr : root->search(k);
 }
 
-// Вставка в BTree
+// Вставка у BTree
 void BTree::insert(Owner* owner) {
     if (root == nullptr) {
         root = new TreeNode(t, true);
@@ -71,7 +71,7 @@ void BTree::insert(Owner* owner) {
     }
 }
 
-// Вставка в неполный узел
+// Вставка в неповний вузол
 void TreeNode::insertNonFull(Owner* owner) {
     int i = n - 1;
     if (leaf) {
@@ -92,7 +92,7 @@ void TreeNode::insertNonFull(Owner* owner) {
     }
 }
 
-// Разбиение узла
+// Розбивання вузла
 void TreeNode::splitChild(int i, TreeNode* y) {
     TreeNode* z = new TreeNode(y->t, y->leaf);
     z->n = t - 1;

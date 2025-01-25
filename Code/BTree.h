@@ -5,6 +5,10 @@
 #include <string>
 using namespace std;
 
+////////////////////////////////////////
+// Файл, який реалізує роботу з деревом
+////////////////////////////////////////
+
 struct Owner {
     string first_name;
     string last_name;
@@ -16,11 +20,11 @@ struct Owner {
 };
 
 class TreeNode {
-    Owner** keys;   // Массив ключей
-    int t;          // Минимальная степень
-    TreeNode** C;   // Массив дочерних указателей
-    int n;          // Текущее количество ключей
-    bool leaf;      // Истина, если листовой узел
+    Owner** keys;   // Массив ключів
+    int t;          // Минимальная ступінь
+    TreeNode** C;   // Массив дочірніх показчиків
+    int n;          // Поточна кількість ключів
+    bool leaf;      // Правда, якщо листовий вузол
 
 public:
     TreeNode(int temp, bool bool_leaf);
@@ -33,8 +37,8 @@ public:
 };
 
 class BTree {
-    TreeNode* root; // Указатель на корневой узел
-    int t;          // Минимальная степень
+    TreeNode* root; // Показчик на корневий вузол
+    int t;          // Мінімальна  ступінь
 
 public:
     BTree(int temp);

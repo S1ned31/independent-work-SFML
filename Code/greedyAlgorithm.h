@@ -14,9 +14,13 @@
 
 using namespace std;
 
+////////////////////////////////////////
+// Файл для роботи з жадібним алгоритмом
+////////////////////////////////////////
 
 #define MAX_LOADSTRING 100
 
+// Структура для проектів
 struct Project {
     std::wstring NameOfProject; 
     int Profit;                 
@@ -27,11 +31,12 @@ struct Project {
         : NameOfProject(name), Profit(profit), DateOfBegining(start), DateOfEnd(end) {}
 };
 
-
 bool compareProjects(const Project& a, const Project& b);
 
+// Функция для знаходження проєктів з максимальним прибутком
 vector<Project> findMaxProfitProjects(const vector<Project>& projects);
 
+// Функция для підрахування спільного прибутку
 int calculateTotalProfit(const vector<Project>& projects);
 
 #endif // !GREEDY

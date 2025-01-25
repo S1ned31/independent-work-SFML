@@ -35,11 +35,11 @@ void heapSort(std::vector<int>& arr) {
 }
 
 void displaySortedArray(const std::vector<int>& arr) {
-    sf::RenderWindow resultWindow(sf::VideoMode(400, 300), L"Отсортированный массив");
+    sf::RenderWindow resultWindow(sf::VideoMode(400, 300), L"Відсортований массив");
 
     sf::Font font;
     if (!font.loadFromFile("Fonts/static/Roboto-Bold.ttf")) {
-        std::cerr << L"Ошибка загрузки шрифта" << std::endl;
+        std::cerr << L"Помилка завантаження шрифта!" << std::endl;
         return;
     }
 
