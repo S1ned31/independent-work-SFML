@@ -7,6 +7,7 @@
 #include "longestSequence.h"
 #include "graphBFS.h"
 #include "dijkstra.h"
+#include "huffmanCompression.h"
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -40,7 +41,7 @@ void loadFromFile(const char* filename, HashTable& hashTable) {
     file.close();
 }
 
-// Функция для відображення геш-таблиці у новому вікні
+// Функція для відображення геш-таблиці у новому вікні
 void displayHashTable(sf::RenderWindow& window, HashTable& hashTable, sf::Font& font) {
     sf::Text text;
     text.setFont(font);
@@ -62,7 +63,7 @@ void displayHashTable(sf::RenderWindow& window, HashTable& hashTable, sf::Font& 
     window.display();
 }
 
-// Функция для відображення дерева у новому вікні
+// Функція для відображення дерева у новому вікні
 void displayBTreeUsers(sf::RenderWindow& window, BTree& t, sf::Font& font) {
     sf::Text text;
     text.setFont(font);
@@ -92,6 +93,67 @@ void displayBTreeUsers(sf::RenderWindow& window, BTree& t, sf::Font& font) {
     window.display();
 }
 
+// Функція для запуску вікна алгоритму Хаффмана
+void runHuffmanWindow(sf::RenderWindow& mainWindow) {
+    sf::RenderWindow huffmanWindow(sf::VideoMode(600, 400), L"Huffman Compression");
+    sf::Font font;
+    if (!font.loadFromFile("Fonts/static/Roboto-Bold.ttf")) {
+        cerr << L"Помилка завантаження шрифта!\n";
+        return;
+    }
+
+    sf::Text inputText(L"Введіть текст:", font, 20);
+    inputText.setPosition(20, 20);
+
+    sf::Text outputText(L"", font, 20);
+    outputText.setPosition(20, 100);
+
+    sf::RectangleShape button(sf::Vector2f(150, 50));
+    button.setPosition(20, 300);
+    button.setFillColor(sf::Color::Blue);
+
+    sf::Text buttonText(L"Стиснути", font, 20);
+    buttonText.setPosition(50, 310);
+
+    string userInput;
+    sf::Text userText(L"", font, 20);
+    userText.setPosition(20, 60);
+
+    while (huffmanWindow.isOpen()) {
+        sf::Event event;
+        while (huffmanWindow.pollEvent(event)) {
+            if (event.type == sf::Event::Closed)
+                huffmanWindow.close();
+            if (event.type == sf::Event::TextEntered) {
+                if (event.text.unicode < 128 && event.text.unicode != 13) {
+                    userInput += static_cast<char>(event.text.unicode);
+                    userText.setString(userInput);
+                }
+            }
+            if (event.type == sf::Event::MouseButtonPressed) {
+                if (button.getGlobalBounds().contains(sf::Mouse::getPosition(huffmanWindow).x, sf::Mouse::getPosition(huffmanWindow).y)) {
+                    auto frequencies = HuffmanCompression::calculateFrequencies(userInput);
+                    auto root = HuffmanCompression::buildHuffmanTree(frequencies);
+                    unordered_map<char, string> codes;
+                    HuffmanCompression::generateHuffmanCodes(root, "", codes);
+                    auto compressed = HuffmanCompression::compress(userInput, codes);
+                    int compressedSize = HuffmanCompression::calculateCompressedSize(compressed);
+                    int originalSize = userInput.size() * 8;
+                    outputText.setString("Сompression: " + to_string(originalSize - compressedSize) + " bit");
+                    HuffmanCompression::freeTree(root);
+                }
+            }
+        }
+
+        huffmanWindow.clear(sf::Color(199, 233, 192));
+        huffmanWindow.draw(inputText);
+        huffmanWindow.draw(userText);
+        huffmanWindow.draw(button);
+        huffmanWindow.draw(buttonText);
+        huffmanWindow.draw(outputText);
+        huffmanWindow.display();
+    }
+}
 
 int main() {
     setlocale(LC_ALL, "ru");
@@ -231,7 +293,7 @@ int main() {
     // Кнопка для створення графу (BFS з алгоритмом Беллмана-Форда)
     sf::RectangleShape bellmanFordButton;
     sf::Text bellmanFordButtonText;
-    createButton(bellmanFordButton, bellmanFordButtonText, font, L"Граф BFS", { 200, 50 }, { 10, 360 }, oliveGreenColor, 16);
+    createButton(bellmanFordButton, bellmanFordButtonText, font, L"Граф Беллмана-Форда", { 200, 50 }, { 10, 360 }, oliveGreenColor, 16);
 
     Graph dijkstra(false); // Приклад для ненаправленного графа
     dijkstra.addEdge(0, 1);
@@ -267,6 +329,15 @@ int main() {
     graphBellmanFord.addEdge(6, 8);
     graphBellmanFord.addEdge(7, 9);
     graphBellmanFord.addEdge(8, 9);
+
+    // Заголовок для алгоритму Хаффмана
+    sf::Text huffmanCompressionTitle;
+    createTitleText(huffmanCompressionTitle, font, L"Алгоритм Хаффмана", 16, 500, 340);
+
+    // Кнопка для створення вікна з алгоримтмом Хаффмана
+    sf::RectangleShape huffmanCompressionButton;
+    sf::Text huffmanCompressionButtonText;
+    createButton(huffmanCompressionButton, huffmanCompressionButtonText, font, L"Алгоритм Хаффмана", { 200, 50 }, { 500, 360 }, oliveGreenColor, 16);
 
     while (window.isOpen()) {
         sf::Event event;
@@ -309,6 +380,10 @@ int main() {
                 if (bellmanFordButton.getGlobalBounds().contains(event.mouseButton.x, event.mouseButton.y)) {
                     graphBellmanFord.visualizeBellmanFord(1, 9);
                 }
+
+                if (huffmanCompressionButton.getGlobalBounds().contains(event.mouseButton.x, event.mouseButton.y)) {
+                    runHuffmanWindow(window);
+                }
             }
         }
 
@@ -334,6 +409,9 @@ int main() {
         window.draw(bellmanFordTitle);
         window.draw(bellmanFordButton);
         window.draw(bellmanFordButtonText);
+        window.draw(huffmanCompressionTitle);
+        window.draw(huffmanCompressionButton);
+        window.draw(huffmanCompressionButtonText);
         window.display();
 
         // Відкриття вікна "Геш-таблиця"

@@ -101,7 +101,7 @@ void Graph::visualizeDijkstra(int startVertex, int endVertex) {
     vector<int> path;
     dijkstra(startVertex, endVertex, path);
 
-    sf::RenderWindow window(sf::VideoMode(800, 600), "Візуалізація алгоритму Dijkstra");
+    sf::RenderWindow window(sf::VideoMode(800, 600), L"Візуалізація алгоритму Dijkstra");
     unordered_map<int, sf::Vector2f> positions;
     calculateNodePositions(positions, window.getSize().x, window.getSize().y);
 
@@ -135,7 +135,7 @@ void Graph::visualizeBellmanFord(int startVertex, int endVertex) {
     vector<int> path;
     if (!bellmanFord(startVertex, endVertex, path)) return;
 
-    sf::RenderWindow window(sf::VideoMode(800, 600), "Візуалізація алгоритму Bellman-Ford");
+    sf::RenderWindow window(sf::VideoMode(800, 600), L"Візуалізація алгоритму Bellman-Ford");
     unordered_map<int, sf::Vector2f> positions;
     calculateNodePositions(positions, window.getSize().x, window.getSize().y);
 

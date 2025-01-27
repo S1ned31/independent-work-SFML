@@ -154,6 +154,7 @@
     <ClCompile Include="Code\longestSequence.cpp" />
     <ClCompile Include="Code\Main.cpp" />
     <ClCompile Include="Code\Sort.cpp" />
+    <ClCompile Include="Code\huffmanCompression.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Binaries\x64\Debug\independent work SFML.exe" />
@@ -198,6 +199,7 @@
     <ClInclude Include="Code\hashTable.h" />
     <ClInclude Include="Code\longestSequence.h" />
     <ClInclude Include="Code\Sort.h" />
+    <ClInclude Include="Code\huffmanCompression.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="..\..\..\OneDrive\Изображения\Снимки экрана\Снимок экрана 2025-01-23 165656.png" />
